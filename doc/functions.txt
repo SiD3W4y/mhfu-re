@@ -1,0 +1,4 @@
+--- Important functions ---
+
+0x0884ea1c: int decrypt_data(void *state, void *data, int size)
+	Decrypts data from buffer and returns decrypted bytes count.
