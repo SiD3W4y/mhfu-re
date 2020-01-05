@@ -59,13 +59,7 @@ class PPSSPP:
                 rawRegs = category
                 break
 
-        # Now we map registers
-        regs = {}
-
-        for regName, regValue in zip(rawRegs["registerNames"], rawRegs["uintValues"]):
-            regs[regName] = regValue
-
-        return regs
+        return dict(zip(rawRegs["registerNames"], rawRegs["uintValues"]))
 
     async def get_fpu_registers(self):
         rawRegs = await self.get_raw_registers()
@@ -75,13 +69,7 @@ class PPSSPP:
                 rawRegs = category
                 break
 
-        # Now we map registers
-        regs = {}
-
-        for regName, regValue in zip(rawRegs["registerNames"], rawRegs["floatValues"]):
-            regs[regName] = regValue
-
-        return regs
+        return dict(zip(rawRegs["registerNames"], rawRegs["floatValues"]))
 
     async def get_vfpu_registers(self):
         rawRegs = await self.get_raw_registers()
@@ -91,13 +79,7 @@ class PPSSPP:
                 rawRegs = category
                 break
 
-        # Now we map registers
-        regs = {}
-
-        for regName, regValue in zip(rawRegs["registerNames"], rawRegs["floatValues"]):
-            regs[regName] = regValue
-
-        return regs
+        return dict(zip(rawRegs["registerNames"], rawRegs["floatValues"]))
 
     async def get_breakpoint_list(self):
         await self._ws_call("cpu.breakpoint.list", {})
