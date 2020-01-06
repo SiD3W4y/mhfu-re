@@ -1,0 +1,9 @@
+{
+	"name": "binja-mhfu",
+	"type": ["binaryview"],
+	"api": ["python3"],
+	"description": "Utilities for analyzing Monster Hunter Freedom Unite",
+	"version": "0.1",
+	"author": "Sideway",
+	"minimumbinaryninjaversion": 1689
+}
