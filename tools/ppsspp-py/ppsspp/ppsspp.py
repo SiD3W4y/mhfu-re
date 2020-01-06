@@ -1,5 +1,6 @@
 import json
 import struct
+import binascii
 import logging
 import websockets
 
@@ -87,6 +88,12 @@ class PPSSPP:
 
         return bkpts["breakpoints"]
 
+    async def get_module_list(self):
+        await self._ws_call("hle.module.list", {})
+        res = await self._wait_event_sync("hle.module.list")
+
+        return res["modules"]
+
     async def evaluate(self, expr):
         await self._ws_call("cpu.evaluate", {"expression": expr})
         ret = await self._wait_event_sync("cpu.evaluate")
@@ -94,13 +101,13 @@ class PPSSPP:
         return ret["uintValue"]
 
     async def read_memory(self, address, size):
-        res = bytearray()
+        """
+        This api call requires a ppsspp fork: https://github.com/SiD3W4y/ppsspp
+        """
+        await self._ws_call("cpu.memory.read", {"address": address, "size": size})
+        ret = await self._wait_event_sync("cpu.memory.read")
 
-        for i in range(0, size, 4):
-            data = await self.evaluate(f"[0x{address + i:08x}]")
-            res += struct.pack("<I", data)
-
-        return res[:size]
+        return binascii.unhexlify(ret["payload"])
 
     async def _wait_event_sync(self, eventName):
         """
