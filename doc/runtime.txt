@@ -1,0 +1,47 @@
+--- Runtime ---
+
+--[ Dynamic code loading
+
+The game eboot.bin is really small and for a reason. At runtime some parts of
+the executable are swapped depending on the context. They are not present in
+the eboot.bin binary physically but as section. You can find bellow the list
+of some sections:
+
+	...
+	22  0x001ca164       0x0 0x089cbbb0       0x0 -rw- .bss
+	23  0x001ca164       0x0 0x09a5f300       0x0 -rwx demo_task.ovl
+	24  0x001d0244       0x0 0x00000000       0x0 ---- .reldemo_task.ovl
+	25  0x001ca164       0x0 0x09a5f300       0x0 -rwx edit_task.ovl
+	26  0x001d0244       0x0 0x00000000       0x0 ---- .reledit_task.ovl
+	27  0x001ca164       0x0 0x09a5f300       0x0 -rwx movie_task.ovl
+	28  0x001d0244       0x0 0x00000000       0x0 ---- .relmovie_task.ovl
+	29  0x001ca164       0x0 0x09a5f300       0x0 -rwx install_task.ovl
+	30  0x001d0244       0x0 0x00000000       0x0 ---- .relinstall_task.ovl
+	31  0x001ca164       0x0 0x09a5f300       0x0 -rwx arcade_task.ovl
+	32  0x001d0244       0x0 0x00000000       0x0 ---- .relarcade_task.ovl
+	33  0x001ca164       0x0 0x09a5f300       0x0 -rwx show_select_task.ovl
+	34  0x001ca164       0x0 0x09a5f300       0x0 -rwx lobby_task.ovl
+	35  0x001d0244       0x0 0x00000000       0x0 ---- .rellobby_task.ovl
+	36  0x001ca164       0x0 0x09a5f300       0x0 -rwx download_task.ovl
+	37  0x001d0244       0x0 0x00000000       0x0 ---- .reldownload_task.ovl
+	38  0x001ca164       0x0 0x09a5f300       0x0 -rwx gallery_task.ovl
+	39  0x001d0244       0x0 0x00000000       0x0 ---- .relgallery_task.ovl
+	40  0x001ca164       0x0 0x09a5f300       0x0 -rwx game_task.ovl
+	41  0x001d0244       0x0 0x00000000       0x0 ---- .relgame_task.ovl
+	42  0x001ca164       0x0 0x09a5f300       0x0 -rwx option_task.ovl
+	43  0x001d0244       0x0 0x00000000       0x0 ---- .reloption_task.ovl
+	44  0x001ca164       0x0 0x09a5f300       0x0 -rwx cont_task.ovl
+	45  0x001d0244       0x0 0x00000000       0x0 ---- .relcont_task.ovl
+	46  0x001ca164       0x0 0x09c19100       0x0 -rwx demo_sub.ovl
+	47  0x001d0244       0x0 0x00000000       0x0 ---- .reldemo_sub.ovl
+	48  0x001ca164       0x0 0x09c19100       0x0 -rwx game_sub.ovl
+	49  0x001d0244       0x0 0x00000000       0x0 ---- .relgame_sub.ovl
+	50  0x001ca164       0x0 0x09d1a280       0x0 -rwx em01.ovl
+	51  0x001d0244       0x0 0x00000000       0x0 ---- .relem01.ovl
+	...
+
+By checking the vaddr we see that all the tasks ovl's have the same address.
+That means that depending on the context parts of the game code are swapped at
+runtime.
+This is not only used for code but also for data. Stage data seems to be loaded
+that way.

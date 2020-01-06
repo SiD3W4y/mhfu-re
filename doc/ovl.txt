@@ -1,0 +1,35 @@
+--- ovl files ---
+
+As described in doc/runtime.txt ovl files are files used as swappable global
+variables.
+
+--[ Extracting the files
+
+The ovl files can be found in the psp_game/usrdir/data.bin. This file is an
+encrypted archive and can be decrypted and unpacked using the following tools:
+
+ - https://github.com/svanheulen/mhff
+ - https://github.com/svanheulen/mhef
+
+--[ Format
+
+struct OVLFile {
+	// Header
+	u8 magic[4]; // 4d 57 6f 33 or "MWo3"
+	u32 unk_1; // @0x4
+	u32 load_base; // Same as section vaddr in eboot.bin
+	u32 unk_2; // @0xc, Always in the same order as the file size
+	u32 unk_3; // @0x10
+	u32 unk_4; // @0x14
+	u32 unk_5; // @0x18
+	u32 load_end; // @0x1c
+	u8 name[0x60];
+
+	// File contents
+	u8 data[];
+};
+
+The header is present in memory when the ovl file is mapped and active.
+
+After the last chunk of data (load_end), the files are padded with zeroes. The
+criterion behind the amount of padding is not clear.
