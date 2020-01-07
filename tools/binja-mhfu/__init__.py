@@ -23,7 +23,7 @@ def _parse_ovl_file(path):
 
     return (data, load_addr)
 
-def load_ovl(bv):
+def map_ovl(bv):
     path = get_open_filename_input("Select an ovl file", ext="*.ovl")
 
     if not path:
@@ -41,8 +41,44 @@ def load_ovl(bv):
             SegmentFlag.SegmentReadable | SegmentFlag.SegmentExecutable)
     bv.write(load_addr, data)
 
-def unload_ovl(bv):
+def unmap_ovl(bv):
     pass
 
-PluginCommand.register("MHFU\\Load ovl file", "Loads an ovl file", load_ovl)
-PluginCommand.register("MHFU\\Unload ovl file", "Unloads an ovl file", load_ovl)
+def trace_detect_function(bv):
+    path = get_open_filename_input("Select a ppsspp trace file", ext="*.txt")
+
+    if not path:
+        return
+
+    functions = 0
+    duplicates = 0
+
+    fp = open(path, "r")
+
+    for line in fp.readlines():
+        line = line.strip()
+
+        chks = line.split(" ")
+
+        if len(chks) != 3:
+            print("Invalid file format")
+            return
+
+        if chks[0] != "CALL":
+            continue
+
+        addr = int(chks[1], 16)
+        fns = bv.get_functions_containing(addr)
+
+        if not fns:
+            bv.create_user_function(addr, plat=bv.platform)
+            functions += 1
+        else:
+            duplicates += 1
+
+    print(f"Loading {functions} functions. Found {duplicates} duplicates")
+
+PluginCommand.register("MHFU\\Map ovl file", "Map ovl file", map_ovl)
+PluginCommand.register("MHFU\\Unmap ovl file", "Unmap an ovl file", unmap_ovl)
+PluginCommand.register("MHFU\\Trace based function detection",
+        "Detect functions based on ppsspp trace", trace_detect_function)
