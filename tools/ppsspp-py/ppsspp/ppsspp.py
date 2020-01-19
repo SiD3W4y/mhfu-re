@@ -112,6 +112,13 @@ class PPSSPP:
 
         return binascii.unhexlify(ret["payload"])
 
+    async def write_memory(self, address, payload):
+        """
+        This api call requires a ppsspp fork: https://github.com/SiD3W4y/ppsspp
+        """
+        payload = binascii.hexlify(payload).decode("UTF-8")
+        await self._ws_call("cpu.memory.write", {"address": address, "payload": payload})
+
     async def _wait_event_sync(self, eventName):
         """
         Waits for an event of a specific type, bypassing the event loop.
