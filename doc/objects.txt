@@ -1,0 +1,7 @@
+--- Game Objects ---
+
+--[ Player State
+
+The player state contains informations relating to the player while in-game.
+
+    +0x2e4: Player HP (u16)
