@@ -46,6 +46,9 @@ class PPSSPP:
     def add_hook(self, address, function):
         self.hooks[address] = function
 
+    async def set_register(self, name, value):
+        await self._ws_call("cpu.setReg", {"name": name, "value": value})
+
     async def get_raw_registers(self):
         await self._ws_call("cpu.getAllRegs", {})
         regs = await self._wait_event_sync("cpu.getAllRegs")
