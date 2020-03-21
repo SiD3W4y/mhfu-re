@@ -4,6 +4,8 @@ from binaryninja.plugin import PluginCommand
 from binaryninja.enums import SegmentFlag
 from binaryninja.interaction import get_open_filename_input
 
+from .nid import nid_resolve
+
 def _parse_ovl_file(path):
     data = open(path, "rb").read()
 
@@ -82,3 +84,4 @@ PluginCommand.register("MHFU\\Map ovl file", "Map ovl file", map_ovl)
 PluginCommand.register("MHFU\\Unmap ovl file", "Unmap an ovl file", unmap_ovl)
 PluginCommand.register("MHFU\\Trace based function detection",
         "Detect functions based on ppsspp trace", trace_detect_function)
+PluginCommand.register("MHFU\\Resolve nid calls", "Resolve PSP api calls" , nid_resolve)
