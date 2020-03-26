@@ -3,5 +3,54 @@
 --[ Player State
 
 The player state contains informations relating to the player while in-game.
-
+    +0x000: Player vtable (0x0x089bb3cc)
+    +0x200: x pos (f32)
+    +0x204: y pos (f32)
+    +0x208: z pos (f32)
+    +0x2a4: Map entry state (u8) (unknown but value is 1, 2 or 3)
     +0x2e4: Player HP (u16)
+    +0x3b8: Damage to apply during frame (converted to negative before call to
+            Player::deal_damage)
+
+--[ Player vtable
+
+vtable[0]  = NULL
+vtable[1]  = NULL
+vtable[4]  = Called on quest start (0x9a65498)
+vtable[11] = Zeroes out a lot of state variable every frame
+vtable[16] = Called on map change (0x9a655f0)
+    - Sets up the player position in the loaded map
+vtable[26] = Called on damage received (0x88d6594)
+    - Prototype: void Player::deal_damage(int32_t damage)
+        - damage > 0 = heal, damage < 0 = damage
+    - Called on damage: 0x09a6b77c
+    - Called on regen : 0x09a69bcc
+vtable[27] = Called on each player action (0x09a67630)
+vtable[31] = Called on damage received
+    - Weirdly, doesn't seem to substract hp from the player
+
+
+--[ Monster State
+
+Same as the player's (at least for position/HP and damage variables)
+
+--[ Monster vtable
+
+vtable[0]  = NULL
+vtable[1]  = NULL
+vtable[34] = Update state.
+    - Prototype: Monster::change_state(u32 unk1, u32 unk2, u32 unk3)
+        - Call made at 0x9ac8b4c
+vtable[58] = Called on hit by function 0x9ad4c58
+
+
+--[ Monster: Rajang
+
+- vtable: 0x089bcd64
+- states:
+    - 1 3   1: Orient toward player
+    - 3 24  1: Lightning beam
+    - 3 18  1: Lightning ball
+    - 7 16  X: Falling from the sky
+    - 5 0/3 X: Instant death
+    - 0 0x25 X: Sleep

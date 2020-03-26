@@ -2,3 +2,9 @@
 
 0x0884ea1c: int decrypt_data(void *state, void *data, int size)
 	Decrypts data from buffer and returns decrypted bytes count.
+
+0x9a6b130: Function handling damage computation to entity (applies all
+           kinds of modifiers to damage stored in entity+0x3b8). Function
+	   is huge af.
+
+0x9ac8af0: Indirectly calling function handling monster state (vtable+0x88)
