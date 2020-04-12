@@ -94,11 +94,15 @@ func main() {
 	for i, bb := range codeinfo.BasicBlocks {
 		// If traceinfo exists we only process bbs present in the trace
 		if traceinfo != nil {
-			searchIdx := sort.Search(len(traceinfo.Hits), func(idx int) bool {
-				return traceinfo.Hits[idx].Address == bb.Start
+			idx := sort.Search(len(traceinfo.Hits), func(j int) bool {
+				return traceinfo.Hits[j].Address >= bb.Start
 			})
 
-			if searchIdx >= len(traceinfo.Hits) {
+			if idx >= len(traceinfo.Hits) {
+				continue
+			}
+
+			if traceinfo.Hits[idx].Address > bb.End {
 				continue
 			}
 		}
