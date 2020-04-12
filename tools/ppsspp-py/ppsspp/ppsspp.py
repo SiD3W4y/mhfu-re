@@ -119,6 +119,38 @@ class PPSSPP:
         payload = binascii.hexlify(payload).decode("UTF-8")
         await self._ws_call("cpu.memory.write", {"address": address, "payload": payload})
 
+    async def read_u8(self, addr):
+        data = await self.read_memory(addr, 1)
+
+        return struct.unpack("B", data)[0]
+
+    async def read_u16(self, addr):
+        data = await self.read_memory(addr, 2)
+
+        return struct.unpack("<H", data)[0]
+
+    async def read_u32(self, addr):
+        data = await self.read_memory(addr, 4)
+
+        return struct.unpack("<I", data)[0]
+
+    async def read_f32(self, addr):
+        data = await self.read_memory(addr, 4)
+
+        return struct.unpack("<f", data)[0]
+
+    async def write_u8(self, addr, value):
+        await self.write_memory(addr, struct.pack("B", value))
+
+    async def write_u16(self, addr, value):
+        await self.write_memory(addr, struct.pack("<H", value))
+
+    async def write_u32(self, addr, value):
+        await self.write_memory(addr, struct.pack("<I", value))
+
+    async def write_f32(self, addr, value):
+        await self.write_memory(addr, struct.pack("<f", value))
+
     async def _wait_event_sync(self, eventName):
         """
         Waits for an event of a specific type, bypassing the event loop.
