@@ -17,6 +17,7 @@ var binPath string
 var displayBlocks bool
 var regexOp string
 var regexArgs string
+var hitCount int
 
 func init() {
 	flag.StringVar(&codeInfoPath, "codeinfo", "info.cif", "CodeInfo file")
@@ -25,6 +26,7 @@ func init() {
 	flag.BoolVar(&displayBlocks, "show_blocks", false, "Displays basic block disassembly")
 	flag.StringVar(&regexOp, "regex_op", "", "Regex used to match specific opcodes")
 	flag.StringVar(&regexArgs, "regex_args", "", "Regex used to match instruction arguments")
+	flag.IntVar(&hitCount, "hitcount", -1, "Only display basic blocks with a specific hitcount")
 }
 
 func instructionMatches(instruction gapstone.Instruction) (bool, error) {
@@ -92,6 +94,8 @@ func main() {
 	}
 
 	for i, bb := range codeinfo.BasicBlocks {
+		var traceHits uint32
+
 		// If traceinfo exists we only process bbs present in the trace
 		if traceinfo != nil {
 			idx := sort.Search(len(traceinfo.Hits), func(j int) bool {
@@ -103,6 +107,12 @@ func main() {
 			}
 
 			if traceinfo.Hits[idx].Address > bb.End {
+				continue
+			}
+
+			traceHits = uint32(traceinfo.Hits[idx].Hitcount)
+
+			if (hitCount >= 0) && (traceHits != uint32(hitCount)) {
 				continue
 			}
 		}
@@ -136,7 +146,11 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("Block %d (0x%x -> 0x%x)\n", i, bb.Start, bb.End)
+		if traceinfo != nil {
+			fmt.Printf("Block %d (0x%x -> 0x%x) %v hits\n", i, bb.Start, bb.End, traceHits)
+		} else {
+			fmt.Printf("Block %d (0x%x -> 0x%x)\n", i, bb.Start, bb.End)
+		}
 
 		if displayBlocks {
 			for _, ins := range insn {
