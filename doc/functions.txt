@@ -1,6 +1,6 @@
 --- Important functions ---
 
-0x0884ea1c: int decrypt_data(void *state, void *data, int size)
+0x0884ea1c: int decrypt_data(void *global_state, void *data, int size)
 	Decrypts data from buffer and returns decrypted bytes count.
 
 0x9a6b130: Function handling damage computation to entity (applies all
@@ -8,3 +8,6 @@
 	   is huge af.
 
 0x9ac8af0: Indirectly calling function handling monster state (vtable+0x88)
+
+0x88d72a4: <unk> give_item(void* player_state, u16 object_id, s16 object_count)
+	Adds count objects to player inventory

@@ -11,6 +11,7 @@ The player state contains informations relating to the player while in-game.
     +0x2e4: Player HP (u16)
     +0x3b8: Damage to apply during frame (converted to negative before call to
             Player::deal_damage)
+    +0x55d: Index into item box
 
 --[ Player vtable
 
@@ -54,3 +55,10 @@ vtable[58] = Called on hit by function 0x9ad4c58
     - 7 16  X: Falling from the sky
     - 5 0/3 X: Instant death
     - 0 0x25 X: Sleep
+
+
+--[ Itembox state (?)
+
+0x89cc558: Pointer to itembox (u32*)
+
+    +0x390: Start of item array, composed of tuples (object_id: u16, object_count: s16)
