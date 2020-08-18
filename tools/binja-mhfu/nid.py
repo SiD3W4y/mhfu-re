@@ -1495,15 +1495,15 @@ def nid_resolve(bv):
         nid = readU32(bv, sceNid.start + (i * 4))
 
         if nid not in nid_map:
-            print("Unknown nid: 0x{:08x}".format(nid))
+            print("[PSP] Unknown nid: 0x{:08x}".format(nid))
             continue
 
         stubAddr = sceStub.start + (i * 8)
         bv.create_user_function(stubAddr)
-        bv.define_user_symbol(Symbol(SymbolType.FunctionSymbol, stubAddr, nid_map[nid]))
+        bv.define_user_symbol(Symbol(SymbolType.ImportedFunctionSymbol, stubAddr, nid_map[nid]))
 
         # Binary Ninja workaround to prevent HLIL call optimization
         bv.write(stubAddr + 4, b"\x0c\x00\x00\x00")
-        print("[+] Resolved '{}'".format(nid_map[nid]))
+        print("[PSP] Resolved '{}'".format(nid_map[nid]))
 
-    print("[+] Resolved {} imports".format(stubCount))
+    print("[PSP] Resolved {} imports".format(stubCount))

@@ -1,10 +1,13 @@
 import struct
+import os
 
 from binaryninja.plugin import PluginCommand
-from binaryninja.enums import SegmentFlag
+from binaryninja.enums import SegmentFlag, SymbolType
 from binaryninja.interaction import get_open_filename_input
+from binaryninja.typelibrary import TypeLibrary
 
 from .nid import nid_resolve
+
 
 def _parse_ovl_file(path):
     data = open(path, "rb").read()
@@ -25,6 +28,7 @@ def _parse_ovl_file(path):
 
     return (data, load_addr)
 
+
 def map_ovl(bv):
     path = get_open_filename_input("Select an ovl file", ext="*.ovl")
 
@@ -43,8 +47,10 @@ def map_ovl(bv):
             SegmentFlag.SegmentReadable | SegmentFlag.SegmentExecutable)
     bv.write(load_addr, data)
 
+
 def unmap_ovl(bv):
     pass
+
 
 def trace_detect_function(bv):
     path = get_open_filename_input("Select a ppsspp trace file", ext="*.txt")
@@ -80,8 +86,62 @@ def trace_detect_function(bv):
 
     print(f"Loading {functions} functions. Found {duplicates} duplicates")
 
+
+def load_type_library(bv):
+    plugin_path = os.path.dirname(os.path.realpath(__file__)) + "/data/"
+    bntl_path = plugin_path + "psp.bntl"
+    header_path = plugin_path + "pspsdk.h"
+    psp_typelib = None
+
+    if not os.path.exists(bntl_path):
+        print("[PSP] Type library does not exist. Generating ...")
+
+        if not os.path.exists(header_path):
+            print("[PSP] Could not find '{}'".format(header_path))
+            return
+
+        types = bv.platform.parse_types_from_source_file(header_path)
+        tlib = TypeLibrary.new(bv.arch, "psp")
+
+        for name, t in types.functions.items():
+            tlib.add_named_object(name, t)
+
+        for name, t in types.types.items():
+            tlib.add_named_type(name, t)
+
+        tlib.finalize()
+        tlib.write_to_file(bntl_path)
+        psp_typelib = tlib
+    else:
+        print("[PSP] Found cached type library: {}".format(bntl_path))
+        psp_typelib = TypeLibrary.load_from_file(bntl_path)
+
+    if not psp_typelib:
+        print("[PSP] Could not load type library")
+        return
+
+    if psp_typelib not in bv.type_libraries:
+        bv.add_type_library(psp_typelib)
+
+    # Now resolve symbols
+    for sym in bv.get_symbols_of_type(SymbolType.ImportedFunctionSymbol):
+        func = bv.get_function_at(sym.address)
+
+        if not func:
+            continue
+
+        func_type = psp_typelib.get_named_object(func.name)
+
+        if func_type is None:
+            continue
+
+        func.set_user_type(func_type)
+        print("[PSP] Resolved type for {}".format(func.name))
+
+
 PluginCommand.register("MHFU\\Map ovl file", "Map ovl file", map_ovl)
 PluginCommand.register("MHFU\\Unmap ovl file", "Unmap an ovl file", unmap_ovl)
 PluginCommand.register("MHFU\\Trace based function detection",
         "Detect functions based on ppsspp trace", trace_detect_function)
 PluginCommand.register("MHFU\\Resolve nid calls", "Resolve PSP api calls" , nid_resolve)
+PluginCommand.register("MHFU\\Apply pspsdk types", "Apply pspsdk type library", load_type_library)
