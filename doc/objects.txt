@@ -1,5 +1,13 @@
 --- Game Objects ---
 
+--[ Game state
+
+The game state is a huge global structure containing references to many
+parts of the game. A pointer to this structure can be found at 0x9c122b0
+when game_task.ovl is loaded:
+    +0x1220: List of entities (Entity*[0x14] -> array of 0x14 pointer to entities)
+    +0x1270: Number of entities (u32)
+
 --[ Player State
 
 The player state contains informations relating to the player while in-game.
@@ -34,6 +42,189 @@ vtable[31] = Called on damage received
 --[ Monster State
 
 Same as the player's (at least for position/HP and damage variables)
+
+    +0x1e4 = entity_id (u8)
+    +0x1e6 = next_id (u16)
+    +0x1e8 = type (u8)
+
+The entity type can be matched to the following list:
+
+0: NO DATA
+1: Rathian
+2: Fatalis
+3: Kelbi
+4: Mosswine
+5: Bullfango
+6: Yian Kut-Ku
+7: Lao-Shan Lung
+8: Cephadrome
+9: Felyne
+10: dummy
+11: Rathalos
+12: Aptonoth
+13: Genprey
+14: Diablos
+15: Khezu
+16: Velociprey
+17: Gravios
+18: dummy
+19: Vespoid
+20: Gypceros
+21: Plesioth
+22: Basarios
+23: Melynx
+24: Hornetaur
+25: Apceros
+26: Monoblos
+27: Velocidrome
+28: Gendrome
+29: dummy
+30: Ioprey
+31: Iodrome
+32: dummy
+33: Kirin
+34: Cephalos
+35: Giaprey
+36: Fatalis
+37: Rathian
+38: Yian Kut-Ku
+39: Gypceros
+40: Yian Garuga
+41: Rathalos
+42: Rathian
+43: Diablos
+44: Monoblos
+45: Khezu
+46: Plesioth
+47: Gravios
+48: Daimyo Hermitaur
+49: Rathalos
+50: Lao-Shan Lung
+51: Blangonga
+52: Congalala
+53: Rajang
+54: Kushala Daora
+55: Shen Gaoren
+56: Great Thunderbug
+57: Shakalaka
+58: Yama Tsukami
+59: Chameleos
+60: Kushala Daora
+61: Blango
+62: Conga
+63: Remobra
+64: Lunastra
+65: Teostra
+66: Hermitaur
+67: Shogun Ceanataur
+68: Bulldrome
+69: Anteka
+70: Popo
+71: Fatalis
+72: Yama Tsukami
+73: Ceanataur
+74: dummy
+75: Tigrex
+76: Akantor
+77: Giadrome
+78: Yian Garuga
+79: King Shakalaka
+80: Vespoid Queen
+81: Nargacuga
+82: Hypnocatrice
+83: Lavasioth
+84: Blangonga
+85: Congalala
+86: Daimyo Hermitaur
+87: Shogun Ceanataur
+88: Ukanlos
+89: Rajang
+90: NO DATA
+91: Rathian
+92: Fatalis
+93: Kelbi
+94: Mosswine
+95: Bullfango
+96: Yian Kut-Ku
+97: Lao-Shan Lung
+98: Cephadrome
+99: Felyne
+100: dummy
+101: Rathalos
+102: Aptonoth
+103: Genprey
+104: Diablos
+105: Khezu
+106: Velociprey
+107: Gravios
+108: Vespoid
+109: Gypceros
+110: Plesioth
+111: Basarios
+112: Melynx
+113: Hornetaur
+114: Apceros
+115: Monoblos
+116: Velocidrome
+117: Gendrome
+118: Ioprey
+119: Iodrome
+120: Kirin
+121: Cephalos
+122: Giaprey
+123: Fatalis
+124: Pink Rathian
+125: Blue Yian Kut-Ku
+126: Purple Gypceros
+127: Yian Garuga
+128: Silver Rathalos
+129: Gold Rathian
+130: Black Diablos
+131: White Monoblos
+132: Red Khezu
+133: Green Plesioth
+134: Black Gravios
+135: Daimyo Hermitaur
+136: Azure Rathalos
+137: Ash Lao-Shan Lung
+138: Blangonga
+139: Congalala
+140: Rajang
+141: Kushala Daora
+142: Shen Gaoren
+143: Great Thunderbug
+144: Shakalaka
+145: Yama Tsukami
+146: Chameleos
+147: Kushala Daora
+148: Blango
+149: Conga
+150: Remobra
+151: Lunastra
+152: Teostra
+153: Hermitaur
+154: Shogun Ceanataur
+155: Bulldrome
+156: Anteka
+157: Popo
+158: Fatalis
+159: Ceanataur
+160: dummy
+161: Tigrex
+162: Akantor
+163: Giadrome
+164: Yian Garuga
+165: King Shakalaka
+166: Vespoid Queen
+167: Nargacuga
+168: Hypnocatrice
+169: Lavasioth
+170: Copper Blangonga
+171: Emerald Congalala
+172: Plum D.Hermitaur
+173: Terra S.Ceanataur
+174: Ukanlos
+175: Rajang
 
 --[ Monster vtable
 
